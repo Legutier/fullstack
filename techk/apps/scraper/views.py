@@ -27,31 +27,35 @@ def getScrapper(request):
     for category in categories:
         query = Category(name=category)
         query.save()
-        counter += len(categoryScrapper(query,url+categories.get(category)))
+        counter += len(scrap_category(query,url+categories.get(category)))
         print(counter)
     print(counter)
 
     return HttpResponse(counter)
 
-
-def categoryScrapper(category_query,url):
+"""
+Scraps through every book in specified category.
+Returns a book list.
+"""
+def scrap_category(category_query,url):
     print('scraping category: ' + category_query.name)
     #If it has a "next" link to scrap, 'runs' the scrapper once more.
     runs = 2
     page = requests.get(url)
     book_list = []
+    #Scrapping category pages
     while(runs > 0):
         runs = 2
         content = page.content
         soup = BeautifulSoup(content, 'html.parser')
         books_area = soup.find(class_="page").find(class_="row").find('section')
         next_page = books_area.find(class_= "next")
-
+        #Only runs once since is not neccesary to run again
         if  next_page is None:
             runs -= 1
         else:
             page = requests.get(url.replace('index.html',next_page.find('a')['href']))
-
+        #Scrapping books
         books = books_area.find_all(class_="product_pod")
         for book  in books:
             bookurl = book.find('a')['href'].replace('../../../','')
@@ -59,7 +63,7 @@ def categoryScrapper(category_query,url):
             book_soup = BeautifulSoup(book_page.content, 'html.parser')
             book_soup = book_soup.find(class_="product_page")
             book_table = book_soup.find(class_="table").find_all('tr')
-
+            #Model to make query
             model = Book(category = category_query,
              title = book_soup.find('h1').get_text(),
              thumbnail = 'http://books.toscrape.com/'+book_soup.find('img')['src'],
@@ -74,7 +78,10 @@ def categoryScrapper(category_query,url):
     return book_list
 
 
-def get_stock(stock_str):
+"""
+Gets the stock of desired book in scraper
+"""
+def scrap_stock(stock_str):
     stock_list = stock_str.replace('(','').split()
     for str in stock_list:
         if str.isdigit():
@@ -82,7 +89,10 @@ def get_stock(stock_str):
     return 0
 
 
-def get_description(book_soup):
+"""
+Gets the description of desired book in scraper
+"""
+def scrap_description(book_soup):
     if book_soup is None:
         return 'None'
     else:

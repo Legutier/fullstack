@@ -1,18 +1,16 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-from .models import Category, Book
-from django.shortcuts import render
 from django.http import HttpResponse
-import requests
+from django.shortcuts import render
+from rest_framework.decorators import api_view
 from bs4 import BeautifulSoup
-# Create your views here.
+import requests
 
+@api_view(['GET','PUT'])
 def index(request):
-    return HttpResponse('Hello, world!')
-
+    if request.method == 'GET':
+        return render(request, 'frontend/index.html')
 
 """
-Returns all the books from every category scrapped
+Scraps webpage, sends data to API
 """
 def getScrapper(request):
     counter = 0

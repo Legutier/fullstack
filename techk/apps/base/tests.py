@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+import pytest
+import requests
 
-from django.test import TestCase
 
-# Create your tests here.
+def test_hello_world():
+    response = requests.get('http://localhost:8000')
+    dom = response.content
+    assert dom == b'Hello, world!'

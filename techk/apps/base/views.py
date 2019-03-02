@@ -1,70 +1,105 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-from .models import Category, Book
-from .serializers import CategorySerializer, BookSerializer
-from rest_framework import generics
-from django.http import Http404
-from rest_framework.response import Response
-from rest_framework.request import clone_request
+from django.http import HttpResponse
+from django.shortcuts import render
+from rest_framework.decorators import api_view
+from bs4 import BeautifulSoup
+import requests
 
 
-class AllowPUTAsCreateMixin(generics.UpdateAPIView):
-    """
-    The following mixin class may be used in order to support PUT-as-create
-    behavior for incoming requests.
-    """
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object_or_none()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-
-        if instance is None:
-            lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
-            lookup_value = self.kwargs[lookup_url_kwarg]
-            extra_kwargs = {self.lookup_field: lookup_value}
-            self.perform_create(serializer, **extra_kwargs)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        self.perform_udpate(serializer)
-        return Response(serializer.data)
-
-    def partial_update(self, request, *args, **kwargs):
-        kwargs['partial'] = True
-        return self.update(request, *args, **kwargs)
-
-    def get_object_or_none(self):
-        try:
-            return self.get_object()
-        except Http404:
-            if self.request.method == 'PUT':
-                # For PUT-as-create operation, we need to ensure that we have
-                # relevant permissions, as if this was a POST request.  This
-                # will either raise a PermissionDenied exception, or simply
-                # return None.
-                self.check_permissions(clone_request(self.request, 'POST'))
-            else:
-                # PATCH requests where the object does not exist should still
-                # return a 404 response.
-                raise
+def index(request):
+        return render(request, 'frontend/index.html')
 
 
+#@api_view(['GET', 'DELETE'])
+#def scrapped(request):
+#    if request.method == 'GET':
+#        return render(request, 'frontend/scrapped.html')
+#    if request.method == 'DELETE':
+#        return render(request,'frontend/scrapped.html')-
 
-    def perform_create(self, serializer, **kwargs):
-        serializer.save(**kwargs)
 
-        def perform_udpate(self, serializer):
-            serializer.save()
+"""
+Scraps webpage, sends data to API
+"""
+def getScrapper():
+    counter = 0
+    categories = dict()
+    url = "http://books.toscrape.com/"
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content,'html.parser').find(class_="sidebar")
+    # Categories are scrapped first.
+    for category in soup.find_all('a', href=True):
+        if 'Books' not in category.get_text():
+            categories[category.get_text().strip().replace('\n','')] = category['href']
+    for category in categories:
+        query = Category(name=category)
+        query.save()
+        counter += len(scrap_category(query,url+categories.get(category)))
+        print(counter)
+    print(counter)
+
+    return HttpResponse(counter)
+
+"""
+Scraps through every book in specified category.
+Returns a book list.
+"""
+def scrap_category(category_query,url):
+    print('scraping category: ' + category_query.name)
+    #If it has a "next" link to scrap, 'runs' the scrapper once more.
+    runs = 2
+    page = requests.get(url)
+    book_list = []
+    #Scrapping category pages
+    while(runs > 0):
+        runs = 2
+        content = page.content
+        soup = BeautifulSoup(content, 'html.parser')
+        books_area = soup.find(class_="page").find(class_="row").find('section')
+        next_page = books_area.find(class_= "next")
+        #Only runs once since is not neccesary to run again
+        if  next_page is None:
+            runs -= 1
+        else:
+            page = requests.get(url.replace('index.html',next_page.find('a')['href']))
+        #Scrapping books
+        books = books_area.find_all(class_="product_pod")
+        for book  in books:
+            bookurl = book.find('a')['href'].replace('../../../','')
+            book_page = requests.get('http://books.toscrape.com/catalogue/'+bookurl)
+            book_soup = BeautifulSoup(book_page.content, 'html.parser')
+            book_soup = book_soup.find(class_="product_page")
+            book_table = book_soup.find(class_="table").find_all('tr')
+            #Model to make query
+            model = Book(category = category_query,
+             title = book_soup.find('h1').get_text(),
+             thumbnail = 'http://books.toscrape.com/'+book_soup.find('img')['src'],
+             price = float(book_table[2].find('td').get_text()[1:]),
+             stock = get_stock(book_table[5].find('td').get_text()) ,
+             description = get_description(book_soup.find
+                                            (id='product_description')),
+             UPC = book_table[0].find('td').get_text(),
+            )
+            book_list.append(model)
+        runs -= 1
+    return book_list
 
 
-class CategoryCreate(AllowPUTAsCreateMixin):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+"""
+Gets the stock of desired book in scraper
+"""
+def scrap_stock(stock_str):
+    stock_list = stock_str.replace('(','').split()
+    for str in stock_list:
+        if str.isdigit():
+            return int(str)
+    return 0
 
-class BookCreate(AllowPUTAsCreateMixin):
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer
 
-class BookList(generics.ListAPIView, generics.DestroyAPIView):
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer
+"""
+Gets the description of desired book in scraper
+"""
+def scrap_description(book_soup):
+    if book_soup is None:
+        return 'None'
+    else:
+        return book_soup.next_sibling.next_sibling.get_text()

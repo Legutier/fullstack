@@ -5,8 +5,7 @@ services:
   #   image: postgres
   web:
     build: .
-    command: sh -c "python3 manage.py makemigrations base &&
-                    python manage.py sqlmigrate base 0001 &&
+    command: sh -c "python3 manage.py makemigrations scraper &&
                     python3 manage.py migrate &&
                     python3 manage.py runserver 0.0.0.0:8000"
     volumes:

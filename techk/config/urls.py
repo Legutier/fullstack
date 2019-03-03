@@ -15,12 +15,13 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from apps.scraper.views import Scraper
+from apps.scraper.views import Scraper, CategoryList
 from apps.base.views import index
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', index),
     url(r'^api-scraper/$', Scraper.as_view()),
+    url(r'^api-category/$',CategoryList.as_view()),
     url(r'^api-auth/', include('rest_framework.urls'))
 ]

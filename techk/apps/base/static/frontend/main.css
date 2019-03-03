@@ -1,0 +1,38 @@
+html, body {
+    background-color:#E0E3DA;
+      font-family: 'Raleway', sans-serif;
+    font-weight: 200;
+    height: 100vh;
+    margin: 0;
+}
+.border {
+  color: #084081;
+}
+.navbar {
+  border: 0;
+  background-color: #090707;
+}
+.nav.navbar-nav li a {
+  color: white;
+}
+.navbar {
+  color: lightblue;
+}
+.sidebar-nav {
+top: 0;
+width: 250px;
+margin: 0;
+padding: 0;
+list-style: none;
+}
+
+.sidebar-nav li {
+text-indent: 20px;
+line-height: 40px;
+}
+
+.sidebar-nav li a {
+display: block;
+text-decoration: none;
+color: #999999;
+}

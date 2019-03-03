@@ -1,15 +1,34 @@
 <!doctype html>
+{% load static %}
 <html>
 <head>
   <meta charset="utf-8">
   <title> FullSTack Testing </title>
+  <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="{% static "frontend/main.css" %}">
 </head>
 <body>
-<h1> Scraper </h1>
-<form action="/api-scraper/", method = "post">
- <input type="submit" value="Submit">
-</form>
+  <div class="wrapper">
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          Scrapper
+        </div>
+        <ul class="nav navbar-nav">
+          <form action="/api-scraper/", method = "post">
+            <input type="submit" value="Scrapear"></form>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <!-- Sidebar -->
+    <div id="sidebar-wrapper">
+      <div class="sidebar-brand"> Categorías </div>
+       <ul class="sidebar-nav" id="sidebar-app">
+        <!--React-->
+       </ul>
+     </div>
   <section class="section">
     <div class="container">
           <div id="app" class="columns"><!-- React --></div>

@@ -10,12 +10,16 @@ from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny
 import requests
 from bs4 import BeautifulSoup
+#from threading import Thread
 
 @permission_classes((AllowAny, ))
 class Scraper(generics.ListCreateAPIView, generics.DestroyAPIView):
 
     """
-    Scraper methord
+    Scraper method.
+    POST scraps webpage and adds data to database.
+    GET gets all the data avaliable.
+    DELETE deletes selected book.
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
@@ -24,7 +28,7 @@ class Scraper(generics.ListCreateAPIView, generics.DestroyAPIView):
         Overrided method
         """
         self.perform_create()
-        return Response({'data':'scraper'},status=status.HTTP_201_CREATED)
+        return Response({'data':'scraper'},status=200)
 
     def perform_create(self):
         """
@@ -34,6 +38,8 @@ class Scraper(generics.ListCreateAPIView, generics.DestroyAPIView):
         Returns a Response when done.
         """
         categories = dict()
+#        query_ls = []
+#        threads = []
         url = "http://books.toscrape.com/"
         page = requests.get(url)
         soup = BeautifulSoup(page.content,'html.parser').find(class_="sidebar")
@@ -48,8 +54,16 @@ class Scraper(generics.ListCreateAPIView, generics.DestroyAPIView):
                 query = query_aux
             except ObjectDoesNotExist:
                 query.save()
+            #query_ls.append([query,url+categories.get(category)])
             self.scrap_category(query,url+categories.get(category))
-        return
+        # TODO ver como implementar multi-threading
+        #for query in query_ls:
+        #    process = Thread(target=self.scrap_category,
+        #                     args=[query[0], query[1]])
+        #    process.start()
+        #    threads.append(process)
+        #for process in threads:
+        #    process.join()
 
     def scrap_category(self, category_query,url):
         """
@@ -122,3 +136,7 @@ class Scraper(generics.ListCreateAPIView, generics.DestroyAPIView):
             return 'None'
         else:
             return book_soup.next_sibling.next_sibling.get_text()
+
+class CategoryList(generics.ListAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer

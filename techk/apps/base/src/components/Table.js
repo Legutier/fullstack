@@ -1,6 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 import key from "weak-key";
+
+handleClick = userId => {
+  const requestOptions = {
+    method: 'DELETE'
+  };
+
 const Table = ({ data }) =>
   !data.length ? (
     <p>Nothing to show</p>
@@ -12,14 +18,18 @@ const Table = ({ data }) =>
       <table className="table is-striped">
         <thead>
           <tr>
-            {Object.entries(data[0]).map(el => <th key={key(el)}>{el[0]}</th>)}
+            <th>Título </th> <th> Imagen </th> <th> Precio </th>
+            <th> Stock </th> <th> Descripción </th>
+            <th> UPC </th> <th> Categoría </th>
           </tr>
         </thead>
         <tbody>
           {data.map(el => (
             <tr key={el.id}>
-              {Object.entries(el).map(el => <td key={key(el)}>{el[1]}</td>)}
-            </tr>
+              <td>{el.title}</td> <td> <img src={el.thumbnail}/> </td>
+              <td>{el.price}</td> <td>{el.stock}  </td>
+              <td> {el.description} </td> <td> {el.UPC} </td> <td> {el.category} </td>
+           </tr>
           ))}
         </tbody>
       </table>

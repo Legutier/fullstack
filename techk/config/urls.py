@@ -21,8 +21,7 @@ from apps.base.views import index
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', index),
-    url(r'^api-scraper/(?P<pk>\d*)$', Scraper.as_view()),
-    url(r'^api-books/(?P<pk>\d*)$', BooksPerCategory.as_view()),
+    url(r'^api-scraper/(?P<pk>\d*)$', Scraper.as_view()),s
     url(r'^api-category/$', CategoryList.as_view()),
     url(r'^api-auth/', include('rest_framework.urls'))
 ]

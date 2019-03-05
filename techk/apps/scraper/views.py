@@ -141,7 +141,3 @@ class Scraper(generics.ListCreateAPIView, generics.DestroyAPIView):
 class CategoryList(generics.ListAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-
-class BooksPerCategory(generics.ListAPIView):
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer

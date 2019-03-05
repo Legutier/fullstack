@@ -16,29 +16,35 @@
 </script>
 </head>
 <body>
-  <div class="wrapper">
     <nav class="navbar navbar-default">
       <div class="container-fluid">
         <div class="navbar-header">
           Scrapper
         </div>
         <ul class="nav navbar-nav">
-          <form action="/api-scraper/", method = "post">
-            <input type="submit" value="Scrapear"  onclick="window.location='/';"></form>
+          <form action="/api-scraper/", method = "post" id="scrap">
+            <input type="submit" value="Scrapear"></form>
           </ul>
         </div>
       </nav>
-    </div>
+
+<div class="containter-fluid">
+  <div class="row">
     <!-- Sidebar -->
-    <div id="sidebar-wrapper">
-      <div class="sidebar-brand"> Categorías </div>
+    <div class="sidebar-brand col-xs-6 col-sm-3 visible-sm visible-md visible-lg">
+      <div class="sidebar-header"><h2> Categorías  </h2></div>
+      <hr>
+      <div id="sidebar-wrapper">
         <!--React-->
-     </div>
-  <section class="section">
-    <div class="container">
-          <div  id="app" class="columns"><!-- React --></div>
+      </div>
     </div>
-  </section>
+   <div class="col-sm-9">
+     <section class="section">
+        <div  id="app" class="columns"><!-- React --></div>
+      </section>
+    </div>
+  </div>
+</div>
 </body>
 {% load static %}
 <script src="{% static "frontend/main.js" %}"></script>

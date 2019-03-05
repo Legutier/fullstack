@@ -21,9 +21,10 @@ class Scraper(generics.ListCreateAPIView, generics.DestroyAPIView):
     GET gets all the data avaliable.
     DELETE deletes selected book.
     """
+    pk = 0
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    def create(self,*args):
+    def create(self,*args,**kwargs):
         """
         Overrided method
         """
@@ -140,3 +141,7 @@ class Scraper(generics.ListCreateAPIView, generics.DestroyAPIView):
 class CategoryList(generics.ListAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+
+class BooksPerCategory(generics.ListAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer

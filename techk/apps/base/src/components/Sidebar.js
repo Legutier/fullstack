@@ -6,7 +6,8 @@ const Sidebar = ({data_category}) =>
       <li>0 categorías</li>
 ) : (
   <ul className="sidebar-nav">
-    {data_category.map(el =><li key={key(el)}>{el.name}</li>)}
+
+    {data_category.map(el => <li key={key(el)}>{el.name}</li>)}
   </ul>
 );
 

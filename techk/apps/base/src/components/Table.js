@@ -2,11 +2,11 @@ import React from "react";
 import PropTypes from "prop-types";
 import key from "weak-key";
 
-function deleteClick(id){
+/* function deleteClick(id){
 
    var url = "/api-scraper/";
    var xhr = new XMLHttpRequest();
-   xhr.open("DELETE", url+id, true);
+   xhr.open("DELETE", url+'', true);
    xhr.load = function () {
 	 var books = JSON.parse(xhr.responseText);
 	 if (xhr.readyState == 4 && xhr.status == "200") {
@@ -17,7 +17,7 @@ function deleteClick(id){
   }
   xhr.send(null);
   return;
-}
+} */
 
 const Table = ({ data }) =>
   !data.length ? (
@@ -41,7 +41,7 @@ const Table = ({ data }) =>
               <td>{el.title}</td> <td> <img src={el.thumbnail}/> </td>
               <td>{el.price} £ </td> <td>{el.stock}  </td>
               <td> {el.description} </td> <td> {el.UPC} </td> <td> {el.category} </td>
-              <td id="delete_book">  <button onclick={deleteClick(el.id)}> Borrar </button></td>
+              /*<td id="delete_book">  <button onclick={delete(el.id)}> Borrar </button></td>*/
            </tr>
           ))}
         </tbody>
@@ -51,5 +51,4 @@ const Table = ({ data }) =>
 Table.propTypes = {
   data: PropTypes.array.isRequired
 };
-
 export default Table;

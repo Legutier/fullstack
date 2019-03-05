@@ -10,10 +10,6 @@ const App = () => (
                 render ={data => <Table data={data}/>} />
 );
 
-//const Delete_app = () => (
-//   <DataDeleter endpoit ="api-scraper"
-//               render = {data_book => <DeleteButton data_book = {data_book} />}
-//);
 const Sidebar_app = () => (
   <DataProvider endpoint ="api-category/"
                 render ={data_category => <Sidebar data_category={data_category} />} />

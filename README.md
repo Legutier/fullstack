@@ -1,5 +1,5 @@
 # Test Fullstack Tech-K
-
+Test desarrollado por : Lukas Gutiérrez Lisboa.
 ## Backend
 
 ###Scrapper
@@ -24,3 +24,5 @@ mediante ORM a django.
   * Las Categorías poseen una relación uno-a-muchos con los libros.
   * El API sólo consigue y entrega la data pedida,
     el trabajo de filtrar la misma se hace mediante frontend(javascript).
+  * la página debe estar recabando la data constantemente, por eso se usó reactJS.
+  (sin embargo la vista de página se actualiza cada 45 segundos.)
